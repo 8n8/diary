@@ -1,5 +1,7 @@
 # Diary
 
+** This is a work in progress and isn't ready to use yet. **
+
 Diary is a command-line app for recording diary entries.
 
 It saves the data in a file called ~/.diary.
@@ -28,4 +30,4 @@ Encoding is little-endian.
 
 ## Text
 
-The piece of text is UTF-8 encoded. It is prefixed by a 32-bit length, little-endian encoded. So the maximum size of any diary entry is 2^32 bytes, or about 4GB.
+The piece of text is UTF-8 encoded. It is prefixed by a 16-bit length, little-endian encoded. So the maximum size of any diary entry is 2^16 bytes, or about 65kB.
