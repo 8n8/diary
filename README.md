@@ -30,4 +30,4 @@ Encoding is little-endian.
 
 ## Text
 
-The piece of text is UTF-8 encoded. It is prefixed by a 16-bit length, little-endian encoded. So the maximum size of any diary entry is 2^16 bytes, or about 65kB.
+The piece of text is UTF-8 encoded. It is prefixed by a 16-bit length, little-endian encoded. So the maximum size of any diary entry is 2^16 - 1 bytes, or about 65kB.
