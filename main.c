@@ -8,7 +8,7 @@
 
 uint8_t textBuf[TEXT_BUF_SIZE];
 
-void get_timestamp(uint8_t timestamp[4]) {
+static void get_timestamp(uint8_t timestamp[4]) {
 	int seconds = (int)time(NULL) - EPOCH;
 	int minutes = seconds / 60;
 	timestamp[0] = minutes & 0xFF;
@@ -17,14 +17,14 @@ void get_timestamp(uint8_t timestamp[4]) {
 	timestamp[3] = (minutes >> 24) & 0xFF;
 }
 
-void encode_size(size_t size, uint8_t encoded[4]) {
+static void encode_size(size_t size, uint8_t encoded[4]) {
 	encoded[0] = size & 0xFF;
 	encoded[1] = (size >> 8) & 0xFF;
 	encoded[2] = (size >> 16) & 0xFF;
 	encoded[3] = (size >> 24) & 0xFF;
 }
 
-int is_valid_utf8(uint8_t buf[TEXT_BUF_SIZE], size_t size) {
+static int is_valid_utf8(uint8_t buf[TEXT_BUF_SIZE], size_t size) {
 	int byte_num = 1;
 	for (size_t i = 0; i < size; ++i) {
 		if (byte_num == 1 && (buf[i] >> 7) == 0) {
@@ -82,7 +82,7 @@ int is_valid_utf8(uint8_t buf[TEXT_BUF_SIZE], size_t size) {
 	return 1;
 }
 
-char* diary_path() {
+static char* diary_path() {
 	wordexp_t result;
 	wordexp("~/.diary", &result, 0);
 	return result.we_wordv[0];
