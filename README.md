@@ -14,7 +14,38 @@ Record a new diary entry:
 echo "Lorem ipsum dolor sit amet." | diary
 ```
 
+# Installation
+
+You need a C compiler. I used GCC 11.3.0. I have only tested this installation on Ubuntu Linux.
+
+Clone the repository:
+
+```
+git clone git@github.com:8n8/diary.git
+```
+
+Change directory into the repository:
+
+```
+cd diary
+```
+
+Build the executable:
+
+```
+gcc -O2 main.c -o diary
+```
+
+Move the executable to somewhere on the path:
+
+```
+mv diary ~/.local/bin
+```
+
+
 # Data format
+
+You only need to read this if you want to write your own parser for the data file.
 
 Each entry has a unique ID, a timestamp, and a piece of text.
 
