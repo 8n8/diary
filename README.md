@@ -1,7 +1,5 @@
 # Diary
 
-*This is a work in progress and isn't ready to use yet.*
-
 Diary is a command-line app for recording diary entries.
 
 It saves the data in a file called ~/.diary.
