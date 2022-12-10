@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <wordexp.h>
 
-#define TEXT_BUF_SIZE 256 * 256
+#define TEXT_BUF_SIZE (256 * 256 - 1)
 #define EPOCH 1670449116
 
 uint8_t textBuf[TEXT_BUF_SIZE];
