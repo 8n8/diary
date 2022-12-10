@@ -1,6 +1,6 @@
 # Diary
 
-Diary is a command-line app for recording diary entries.
+Diary is a command-line app for keeping a diary.
 
 It saves the data in a file called ~/.diary.
 
