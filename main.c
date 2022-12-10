@@ -17,11 +17,9 @@ static void get_timestamp(uint8_t timestamp[4]) {
 	timestamp[3] = (minutes >> 24) & 0xFF;
 }
 
-static void encode_size(size_t size, uint8_t encoded[4]) {
+static void encode_size(size_t size, uint8_t encoded[2]) {
 	encoded[0] = size & 0xFF;
 	encoded[1] = (size >> 8) & 0xFF;
-	encoded[2] = (size >> 16) & 0xFF;
-	encoded[3] = (size >> 24) & 0xFF;
 }
 
 static int is_valid_utf8(uint8_t buf[TEXT_BUF_SIZE], size_t size) {
@@ -100,7 +98,7 @@ static int write_diary() {
 	}
 
 	if (!is_valid_utf8(textBuf, size)) {
-		fputs("the diary entry is not valid text\n", stderr);
+		fputs("invalid text\n", stderr);
 		return -1;
 	}
 
@@ -119,11 +117,11 @@ static int write_diary() {
 		return -1;
 	}
 
-	uint8_t encoded_size[4];
+	uint8_t encoded_size[2];
 	encode_size(size, encoded_size);
 
-	written = fwrite(encoded_size, 1, 4, file);
-	if (written != 4) {
+	written = fwrite(encoded_size, 1, 2, file);
+	if (written != 2) {
 		fputs("could not save entry size\n", stderr);
 		return -1;
 	}
@@ -140,6 +138,10 @@ static int write_diary() {
 
 int parse_uint32(uint8_t buf[4]) {
 	return buf[0] + (buf[1] << 8) + (buf[2] << 16) + (buf[3] << 24);
+}
+
+int parse_uint16(uint8_t buf[2]) {
+    return buf[0] + (buf[1] << 8);
 }
 
 
@@ -160,11 +162,12 @@ static int read_diary() {
 		return -1;
 	}
 
-	uint8_t num_buf[4];
+	uint8_t time_buf[4];
+    uint8_t size_buf[2];
 	int first_time = 1;
 
 	while (1) {
-		size_t size = fread(num_buf, 1, 4, file);
+		size_t size = fread(time_buf, 1, 4, file);
 		if (feof(file)) {
 			return 0;
 		}
@@ -179,15 +182,15 @@ static int read_diary() {
 			fputs("\n\n", stdout);
 		}
 
-		print_timestamp(parse_uint32(num_buf));
+		print_timestamp(parse_uint32(time_buf));
 
-		size = fread(num_buf, 1, 4, file);
-		if (size != 4) {
-			fprintf(stderr, "corrupted file: text length contained %ld bytes but should contain 4\n", size);
+		size = fread(size_buf, 1, 2, file);
+		if (size != 2) {
+			fprintf(stderr, "corrupted file: text length contained %ld bytes but should contain 2\n", size);
 			return -1;
 		}
 
-		int text_size = parse_uint32(num_buf);
+		int text_size = parse_uint16(size_buf);
 
 		size = fread(textBuf, 1, text_size, file);
 		if (size != text_size) {

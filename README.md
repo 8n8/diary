@@ -63,7 +63,7 @@ Each entry has a unique ID, a timestamp, and a piece of text.
 
 ## Unique ID
 
-The unique ID is a non-negative integer, and is the position of the entry in the data file, so the first item has ID 0, the second has ID 1 and so on.
+The unique ID is a non-negative integer, and is the position of the entry in the data file, so the first item has ID 0, the second has ID 1 and so on. So this is implied by the position in the file and is not explicitly recorded.
 
 ## Timestamp
 
