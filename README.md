@@ -6,11 +6,25 @@ It saves the data in a file called ~/.diary.
 
 # Usage
 
-Record a new diary entry: 
+Write a new diary entry: 
 
 ```
-echo "Lorem ipsum dolor sit amet." | diary
+echo "Lorem ipsum dolor sit amet." | diary write
 ```
+
+Read the diary:
+
+```
+diary read
+```
+
+It can be helpful to pipe the diary to `less`, so you can search it. Like this:
+
+```
+diary read | less
+```
+
+To search, type `/`, then the search query, then press Enter. You can step through the matches by pressing `n`.
 
 # Installation
 

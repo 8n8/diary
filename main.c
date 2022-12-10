@@ -88,7 +88,7 @@ static char* diary_path() {
 	return result.we_wordv[0];
 }
 
-int main(int argc, char* argv[]) {
+static int write_diary() {
 	size_t size = fread(textBuf, 1, TEXT_BUF_SIZE, stdin);
 	if (!feof(stdin)) {
 		fputs("entry was greater than 65kB\n", stderr);
@@ -135,4 +135,98 @@ int main(int argc, char* argv[]) {
 	}
 
 	return 0;
+}
+
+
+int parse_uint32(uint8_t buf[4]) {
+	return buf[0] + (buf[1] << 8) + (buf[2] << 16) + (buf[3] << 24);
+}
+
+
+void print_timestamp(int minutes) {
+	time_t posix_seconds = (minutes * 60) + EPOCH;
+	struct tm* local = localtime(&posix_seconds);
+
+	char buf[36] = "Wednesday 31 September 2022 2:30pm\0";
+	strftime(buf, 36, "%A %-e %B %Y %-I:%M %p", local);
+	printf("%s\n\n", buf);
+}
+
+
+static int read_diary() {
+	FILE* file = fopen(diary_path(), "rb");
+	if (file == NULL) {
+		fputs("failed to save: could not open ~/.diary\n", stderr);
+		return -1;
+	}
+
+	uint8_t num_buf[4];
+	int first_time = 1;
+
+	while (1) {
+		size_t size = fread(num_buf, 1, 4, file);
+		if (feof(file)) {
+			return 0;
+		}
+		if (size != 4) {
+			fprintf(stderr, "corrupted file: timestamp contained %ld bytes but should contain 4\n", size);
+			return -1;
+		}
+
+		if (first_time) {
+			first_time = 0;
+		} else {
+			fputs("\n\n", stdout);
+		}
+
+		print_timestamp(parse_uint32(num_buf));
+
+		size = fread(num_buf, 1, 4, file);
+		if (size != 4) {
+			fprintf(stderr, "corrupted file: text length contained %ld bytes but should contain 4\n", size);
+			return -1;
+		}
+
+		int text_size = parse_uint32(num_buf);
+
+		size = fread(textBuf, 1, text_size, file);
+		if (size != text_size) {
+			fprintf(stderr, "corrupted file: expecting %d bytes of text, but got %ld\n", text_size, size);
+			return -1;
+		}
+
+		for (int i = 0; i < text_size; ++i) {
+			putchar(textBuf[i]);
+		}
+	}
+
+	return 0;
+}
+
+char* usage = "invalid arguments: usage instructions are at https://github.com/8n8/diary\n";
+
+static int is_write(char* arg) {
+	return arg[0] == 'w' && arg[1] == 'r' && arg[2] == 'i' && arg[3] == 't' && arg[4] == 'e' && arg[5] == '\0';
+}
+
+static int is_read(char* arg) {
+	return arg[0] == 'r' && arg[1] == 'e' && arg[2] == 'a' && arg[3] == 'd' && arg[4] == '\0';
+}
+
+int main(int argc, char* argv[]) {
+	if (argc != 2) {
+		fputs(usage, stderr);
+		return -1;
+	}
+
+	if (is_write(argv[1])) {
+		return write_diary();
+	}
+
+	if (is_read(argv[1])) {
+		return read_diary();
+	}
+
+	fputs(usage, stderr);
+	return -1;
 }
