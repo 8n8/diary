@@ -30,7 +30,7 @@ static int is_valid_utf8(uint8_t buf[TEXT_BUF_SIZE], size_t size) {
 		}
 
 		if (byte_num == 1 && (buf[i] >> 5) == 6) {
-			byte_num == 2;
+			byte_num = 2;
 			continue;
 		}
 
