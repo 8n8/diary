@@ -163,7 +163,7 @@ static int read_diary() {
 	}
 
 	uint8_t time_buf[4];
-    uint8_t size_buf[2];
+	uint8_t size_buf[2];
 	int first_time = 1;
 
 	while (1) {
